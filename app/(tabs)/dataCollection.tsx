@@ -18,7 +18,9 @@ export default function SurveyScreen() {
   const handleSelect = (id) => {
     setSelected(id);
     // Vai para a tela de agradecimento
+    setTimeout(() => {
     router.push("/thankYou");
+  }, 3000);
   };
 
   return (
