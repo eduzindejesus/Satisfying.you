@@ -30,6 +30,16 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen name="cardsSearch" options={{ title: 'Pesquisas' }} />
+        <Stack.Screen name="createAccount" options={{ title: 'Criar Conta' }} />
+        <Stack.Screen name="dataCollection" options={{ title: 'Coleta de Dados' }} />
+        <Stack.Screen name="explore" options={{ title: 'Explorar' }} />
+        <Stack.Screen name="home" options={{ title: 'Home' }} />
+        <Stack.Screen name="modifySearch" options={{ title: 'Modificar Pesquisa' }} />
+        <Stack.Screen name="newSearch" options={{ title: 'Nova Pesquisa' }} />
+        <Stack.Screen name="recoverPassword" options={{ title: 'Recuperar Senha' }} />
+        <Stack.Screen name="report" options={{ title: 'Relatório' }} />
+        <Stack.Screen name="thankYou" options={{ title: 'Agradecimentos' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

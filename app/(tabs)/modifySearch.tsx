@@ -1,4 +1,58 @@
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    width: Math.min(Dimensions.get('window').width * 0.8, 600),
+    backgroundColor: '#3C2C8D',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  simButton: {
+    flex: 1,
+    backgroundColor: '#E94F7A',
+    paddingVertical: 12,
+    marginRight: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#4F7AE9',
+    paddingVertical: 12,
+    marginLeft: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+});
 import React, { useState } from 'react';
+import { Modal, Pressable, Dimensions } from 'react-native';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet
 } from 'react-native';
@@ -13,6 +67,7 @@ export default function EditResearchScreen() {
   const [date, setDate] = useState('16/02/2024');
   const [errorName, setErrorName] = useState('');
   const [errorDate, setErrorDate] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   const [fontsLoaded] = useFonts({
     'AveriaLibre': Fonts.averiaRegular,
@@ -45,7 +100,7 @@ export default function EditResearchScreen() {
   };
 
   const handleDelete = () => {
-    alert('Pesquisa apagada!');
+    setShowModal(true);
   };
 
   return (
@@ -96,6 +151,38 @@ export default function EditResearchScreen() {
         <Ionicons name="trash-outline" size={28} color="#fff" />
         <Text style={styles.deleteButtonText}>Apagar</Text>
       </TouchableOpacity>
+
+      {/* Custom Modal for Deletion Confirmation */}
+      <Modal
+        visible={showModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={modalStyles.overlay}>
+          <View style={modalStyles.modalBox}>
+            <Text style={modalStyles.modalText}>Tem certeza de apagar essa pesquisa?</Text>
+            <View style={modalStyles.buttonRow}>
+              <Pressable
+                style={modalStyles.simButton}
+                onPress={() => {
+                  setShowModal(false);
+                  // Adicione aqui a lógica de exclusão real
+                  alert('Pesquisa apagada!');
+                }}
+              >
+                <Text style={modalStyles.buttonText}>SIM</Text>
+              </Pressable>
+              <Pressable
+                style={modalStyles.cancelButton}
+                onPress={() => setShowModal(false)}
+              >
+                <Text style={modalStyles.buttonText}>CANCELAR</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
