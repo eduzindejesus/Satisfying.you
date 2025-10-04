@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import SearchCard from '@/components/searchCard';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -42,15 +43,10 @@ export default function HomeScreen() {
       {/* Cards de eventos */}
       <ScrollView horizontal contentContainerStyle={styles.cardsContainer} showsHorizontalScrollIndicator={false}>
         {events.map((event) => (
-          <TouchableOpacity 
-            key={event.id} 
-            style={styles.card} 
-            onPress={() => router.push(`/cardsSearch?id=${event.id}`)} // clique leva para /cardsSearch
-          >
-            <Ionicons name={event.icon} size={50} color={event.color} />
-            <Text style={styles.cardTitle}>{event.title}</Text>
-            <Text style={styles.cardDate}>{event.date}</Text>
-          </TouchableOpacity>
+          <SearchCard 
+            key={event.id}
+            event={event}
+          />
         ))}
       </ScrollView>
 
@@ -74,28 +70,6 @@ const styles = StyleSheet.create({
     fontFamily: 'AveriaLibre',
   },
   cardsContainer: { paddingHorizontal: 10 },
-  card: {
-    width: 140,
-    height: 160,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 15,
-  },
-  cardTitle: {
-    marginTop: 10,
-    fontSize: 16,
-    fontFamily: 'AveriaLibre',
-    color: '#1976D2',
-    textAlign: 'center',
-  },
-  cardDate: {
-    fontSize: 12,
-    color: '#555',
-    marginTop: 5,
-    fontFamily: 'AveriaLibre',
-  },
   searchButton: {
     marginTop: 30,
     marginHorizontal: 20,
