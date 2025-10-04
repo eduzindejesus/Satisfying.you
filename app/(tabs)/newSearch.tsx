@@ -1,6 +1,11 @@
+
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet
+  View,
+  Text, 
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
 } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
@@ -11,8 +16,10 @@ export default function NewResearchScreen() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
+  const [imageSelected, setImageSelected] = useState(false);
   const [errorName, setErrorName] = useState('');
   const [errorDate, setErrorDate] = useState('');
+  const [errorImage, setErrorImage] = useState('');
 
   const [fontsLoaded] = useFonts({
     'AveriaLibre': Fonts.averiaRegular,
@@ -25,22 +32,28 @@ export default function NewResearchScreen() {
   const handleRegister = () => {
     let valid = true;
 
-    if (!name) {
-      setErrorName('Preencha no nome da pesquisa');
+    if (!name.trim()) {
+      setErrorName('Preencha o nome da pesquisa');
       valid = false;
     } else {
       setErrorName('');
     }
 
-    if (!date) {
+    if (!date.trim()) {
       setErrorDate('Preencha a data');
       valid = false;
     } else {
       setErrorDate('');
     }
 
+    if (!imageSelected) {
+      setErrorImage('Selecione uma imagem');
+      valid = false;
+    } else {
+      setErrorImage('');
+    }
+
     if (valid) {
-      // Aqui você pode salvar no banco ou navegar
       alert('Pesquisa cadastrada com sucesso!');
     }
   };
@@ -80,9 +93,20 @@ export default function NewResearchScreen() {
 
       {/* Imagem */}
       <Text style={styles.label}>Imagem</Text>
-      <TouchableOpacity style={styles.imageBox}>
-        <Text style={styles.imageText}>Câmera/Galeria de imagens</Text>
+      <TouchableOpacity 
+        style={styles.imageBox}
+        onPress={() => {
+          setImageSelected(true);
+          setErrorImage('');
+          // Aqui você pode adicionar lógica para abrir câmera/galeria
+          alert('Imagem selecionada! (Simulação)');
+        }}
+      >
+        <Text style={styles.imageText}>
+          {imageSelected ? 'Imagem selecionada ✓' : 'Câmera/Galeria de imagens'}
+        </Text>
       </TouchableOpacity>
+      {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
 
       {/* Botão cadastrar */}
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>

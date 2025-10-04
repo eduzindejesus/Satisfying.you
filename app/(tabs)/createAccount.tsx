@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
-import { useRouter } from 'expo-router';
+import { arePasswordsEqual, isPasswordValid, isValidEmail } from '@/utils/validate';
 import { Ionicons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -21,13 +22,38 @@ export default function SignUpScreen() {
   }
 
   const handleSignUp = () => {
-    if (password !== repeatPassword) {
-      setError('O campo repetir senha difere da senha');
+    if (!email.trim()) {
+      setError('Por favor, digite seu e-mail.');
       return;
     }
+    
+    if (!isValidEmail(email)) {
+      setError('Email inválido.');
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Por favor, digite sua senha.');
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      setError('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
+    if (!repeatPassword.trim()) {
+      setError('Por favor, repita sua senha.');
+      return;
+    }
+
+    if (!arePasswordsEqual(password, repeatPassword)) {
+      setError('O campo repetir senha difere da senha.');
+      return;
+    }
+
     setError('');
-    // Aqui você poderia adicionar lógica de cadastro real
-    router.push('/'); // ou outra tela após cadastro
+    router.push('/');
   };
 
   return (

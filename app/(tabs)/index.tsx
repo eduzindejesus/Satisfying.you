@@ -1,10 +1,13 @@
+import { Fonts } from '@/constants/Fonts';
+import { useFonts } from 'expo-font';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet
+  StyleSheet,
+  Text, TextInput, TouchableOpacity,
+  View
 } from 'react-native';
-import { useFonts } from 'expo-font';
-import { Fonts } from '@/constants/Fonts';
-import { useRouter } from 'expo-router';
+import { isValidEmail } from '@/utils/validate';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -21,6 +24,21 @@ export default function LoginScreen() {
   }
 
   const handleLogin = () => {
+    if (!email.trim()) {
+      setError('Por favor, digite seu e-mail.');
+      return;
+    }
+    
+    if (!isValidEmail(email)) {
+      setError('Email inválido.');
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Por favor, digite sua senha.');
+      return;
+    }
+
     // Usuário e senha padrão
     if (email === 'teste@teste.com' && password === '123456') {
       setError('');
