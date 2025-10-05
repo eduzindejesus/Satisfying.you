@@ -5,7 +5,6 @@ import {
 import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import SearchCard from '@/components/searchCard';
 
 export default function HomeScreen() {
@@ -30,7 +29,6 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Barra superior com menu e busca */}
       <View style={styles.topBar}>
-        <Ionicons name="menu" size={32} color="#fff" style={{ marginRight: 10 }} />
         <TextInput
           style={styles.searchInput}
           placeholder="Insira o termo de busca..."
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
   },
   cardsContainer: { paddingHorizontal: 10 },
   searchButton: {
-    marginTop: 30,
+    margin: 30,
     marginHorizontal: 20,
     backgroundColor: '#4CAF50',
     paddingVertical: 14,

@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 export default function SurveyScreen() {
   const router = useRouter();
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<number | null>(null);
 
   const options = [
     { id: 1, label: "Péssimo", icon: "sad-outline", color: "#E74C3C" },
@@ -15,12 +15,12 @@ export default function SurveyScreen() {
     { id: 5, label: "Excelente", icon: "happy", color: "#27AE60" },
   ];
 
-  const handleSelect = (id) => {
+  const handleSelect = (id: number) => {
     setSelected(id);
     // Vai para a tela de agradecimento
     setTimeout(() => {
-    router.push("/thankYou");
-  }, 3000);
+      router.push("/thankYou");
+    }, 3000);
   };
 
   return (
@@ -35,7 +35,7 @@ export default function SurveyScreen() {
             onPress={() => handleSelect(option.id)}
           >
             <Ionicons
-              name={option.icon}
+              name={option.icon as any}
               size={48}
               color={option.color}
               style={[

@@ -1,6 +1,5 @@
 import { Fonts } from '@/constants/Fonts';
 import { arePasswordsEqual, isPasswordValid, isValidEmail } from '@/utils/validate';
-import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -58,14 +57,6 @@ export default function SignUpScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Cabeçalho */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nova Conta</Text>
-      </View>
-
       {/* Formulário */}
       <Text style={styles.label}>E-mail</Text>
       <TextInput

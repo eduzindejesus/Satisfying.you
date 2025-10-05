@@ -1,5 +1,4 @@
 import { Fonts } from '@/constants/Fonts';
-import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -18,7 +17,11 @@ export default function PasswordRecoveryScreen() {
         return <View style={{ flex: 1, backgroundColor: '#3C2C8D' }} />;
     }
 
-    const validateEmail = (email) => {
+    interface ValidateEmailFn {
+        (email: string): boolean;
+    }
+
+    const validateEmail: ValidateEmailFn = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     };
@@ -35,13 +38,6 @@ export default function PasswordRecoveryScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Cabeçalho */}
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={28} color="#fff" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Recuperação de senha</Text>
-            </View>
 
             <Text style={styles.label}>E-mail</Text>
             <TextInput

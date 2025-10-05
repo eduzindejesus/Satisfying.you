@@ -1,101 +1,108 @@
+import React, { useState } from "react";
+import {
+  Modal,
+  Pressable,
+  Dimensions,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import { useFonts } from "expo-font";
+import { Fonts } from "@/constants/Fonts";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+
 const modalStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalBox: {
-    width: Math.min(Dimensions.get('window').width * 0.8, 600),
-    backgroundColor: '#3C2C8D',
+    width: Math.min(Dimensions.get("window").width * 0.8, 600),
+    backgroundColor: "#3C2C8D",
     borderRadius: 16,
     padding: 24,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
   },
   modalText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 24,
   },
   buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
   },
   simButton: {
     flex: 1,
-    backgroundColor: '#E94F7A',
+    backgroundColor: "#E94F7A",
     paddingVertical: 12,
     marginRight: 8,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#4F7AE9',
+    backgroundColor: "#4F7AE9",
     paddingVertical: 12,
     marginLeft: 8,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
 });
-import React, { useState } from 'react';
-import { Modal, Pressable, Dimensions } from 'react-native';
-import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet
-} from 'react-native';
-import { useFonts } from 'expo-font';
-import { Fonts } from '@/constants/Fonts';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function EditResearchScreen() {
   const router = useRouter();
-  const [name, setName] = useState('Carnaval 2024');
-  const [date, setDate] = useState('16/02/2024');
-  const [errorName, setErrorName] = useState('');
-  const [errorDate, setErrorDate] = useState('');
+  const [name, setName] = useState("Carnaval 2024");
+  const [date, setDate] = useState("16/02/2024");
+  const [errorName, setErrorName] = useState("");
+  const [errorDate, setErrorDate] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   const [fontsLoaded] = useFonts({
-    'AveriaLibre': Fonts.averiaRegular,
+    AveriaLibre: Fonts.averiaRegular,
   });
 
   if (!fontsLoaded) {
-    return <View style={{ flex: 1, backgroundColor: '#3C2C8D' }} />;
+    return <View style={{ flex: 1, backgroundColor: "#3C2C8D" }} />;
   }
 
   const handleSave = () => {
     let valid = true;
 
     if (!name) {
-      setErrorName('Preencha o nome da pesquisa');
+      setErrorName("Preencha o nome da pesquisa");
       valid = false;
     } else {
-      setErrorName('');
+      setErrorName("");
     }
 
     if (!date) {
-      setErrorDate('Preencha a data');
+      setErrorDate("Preencha a data");
       valid = false;
     } else {
-      setErrorDate('');
+      setErrorDate("");
     }
 
     if (valid) {
-      alert('Pesquisa atualizada com sucesso!');
+      alert("Pesquisa atualizada com sucesso!");
     }
   };
 
@@ -107,7 +114,7 @@ export default function EditResearchScreen() {
     <View style={styles.container}>
       {/* Cabeçalho */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push('/cardsSearch')}>
+        <TouchableOpacity onPress={() => router.push("/cardsSearch")}>
           <Ionicons name="arrow-back" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Modificar pesquisa</Text>
@@ -115,11 +122,7 @@ export default function EditResearchScreen() {
 
       {/* Nome */}
       <Text style={styles.label}>Nome</Text>
-      <TextInput
-        style={styles.input}
-        value={name}
-        onChangeText={setName}
-      />
+      <TextInput style={styles.input} value={name} onChangeText={setName} />
       {errorName ? <Text style={styles.error}>{errorName}</Text> : null}
 
       {/* Data */}
@@ -132,7 +135,12 @@ export default function EditResearchScreen() {
           placeholder="dd/mm/aaaa"
           placeholderTextColor="#aaa"
         />
-        <Ionicons name="calendar-outline" size={24} color="#3C2C8D" style={styles.calendarIcon} />
+        <Ionicons
+          name="calendar-outline"
+          size={24}
+          color="#3C2C8D"
+          style={styles.calendarIcon}
+        />
       </View>
       {errorDate ? <Text style={styles.error}>{errorDate}</Text> : null}
 
@@ -161,14 +169,16 @@ export default function EditResearchScreen() {
       >
         <View style={modalStyles.overlay}>
           <View style={modalStyles.modalBox}>
-            <Text style={modalStyles.modalText}>Tem certeza de apagar essa pesquisa?</Text>
+            <Text style={modalStyles.modalText}>
+              Tem certeza de apagar essa pesquisa?
+            </Text>
             <View style={modalStyles.buttonRow}>
               <Pressable
                 style={modalStyles.simButton}
                 onPress={() => {
                   setShowModal(false);
                   // Adicione aqui a lógica de exclusão real
-                  alert('Pesquisa apagada!');
+                  alert("Pesquisa apagada!");
                 }}
               >
                 <Text style={modalStyles.buttonText}>SIM</Text>
@@ -188,17 +198,62 @@ export default function EditResearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#3C2C8D', padding: 20 },
-  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 30 },
-  headerTitle: { color: '#fff', fontSize: 22, fontFamily: 'AveriaLibre', marginLeft: 10 },
-  label: { color: '#fff', fontFamily: 'AveriaLibre', marginBottom: 5, fontSize: 16 },
-  input: { backgroundColor: '#fff', borderRadius: 4, paddingHorizontal: 10, height: 45, marginBottom: 5 },
-  error: { color: '#FF4D4D', fontFamily: 'AveriaLibre', marginBottom: 15 },
-  dateContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
-  calendarIcon: { position: 'absolute', right: 10 },
-  imageBox: { backgroundColor: '#fff', borderRadius: 4, height: 70, justifyContent: 'center', alignItems: 'center', marginBottom: 30 },
-  saveButton: { backgroundColor: '#4CAF50', paddingVertical: 12, borderRadius: 4, alignItems: 'center', marginBottom: 15 },
-  saveButtonText: { color: '#fff', fontFamily: 'AveriaLibre', fontSize: 18 },
-  deleteButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FF4D4D', paddingVertical: 12, borderRadius: 4 },
-  deleteButtonText: { color: '#fff', fontFamily: 'AveriaLibre', fontSize: 18, marginLeft: 8 },
+  container: { flex: 1, backgroundColor: "#3C2C8D", padding: 20 },
+  header: { flexDirection: "row", alignItems: "center", marginBottom: 30 },
+  headerTitle: {
+    color: "#fff",
+    fontSize: 22,
+    fontFamily: "AveriaLibre",
+    marginLeft: 10,
+  },
+  label: {
+    color: "#fff",
+    fontFamily: "AveriaLibre",
+    marginBottom: 5,
+    fontSize: 16,
+  },
+  input: {
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    paddingHorizontal: 10,
+    height: 45,
+    marginBottom: 5,
+  },
+  error: { color: "#FF4D4D", fontFamily: "AveriaLibre", marginBottom: 15 },
+  dateContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  calendarIcon: { position: "absolute", right: 10 },
+  imageBox: {
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  saveButton: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    borderRadius: 4,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  saveButtonText: { color: "#fff", fontFamily: "AveriaLibre", fontSize: 18 },
+  deleteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF4D4D",
+    paddingVertical: 12,
+    borderRadius: 4,
+  },
+  deleteButtonText: {
+    color: "#fff",
+    fontFamily: "AveriaLibre",
+    fontSize: 18,
+    marginLeft: 8,
+  },
 });
