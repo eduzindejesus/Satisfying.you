@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView
-} from 'react-native';
-import { useFonts } from 'expo-font';
-import { Fonts } from '@/constants/Fonts';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import SearchCard from '@/components/searchCard';
+import { Fonts } from '@/constants/Fonts';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text, TextInput, TouchableOpacity,
+  View
+} from 'react-native';
+import DrawerNavigator from './DrawerNavigator';
 
-export default function HomeScreen() {
+export function HomeContent() {
   const router = useRouter();
+  const navigation = useNavigation<any>();
   const [search, setSearch] = useState('');
 
   const [fontsLoaded] = useFonts({
@@ -30,7 +36,9 @@ export default function HomeScreen() {
     <View style={styles.container}>
       {/* Barra superior com menu e busca */}
       <View style={styles.topBar}>
-        <Ionicons name="menu" size={32} color="#fff" style={{ marginRight: 10 }} />
+        <TouchableOpacity onPress={() => navigation?.openDrawer?.()} style={{ marginRight: 10 }}>
+          <Ionicons name="menu" size={32} color="#fff" />
+        </TouchableOpacity>
         <TextInput
           style={styles.searchInput}
           placeholder="Insira o termo de busca..."
@@ -56,6 +64,11 @@ export default function HomeScreen() {
       </TouchableOpacity>
     </View>
   );
+}
+
+// Export the drawer navigator as the Home tab content
+export default function HomeScreen() {
+  return <DrawerNavigator />;
 }
 
 const styles = StyleSheet.create({
