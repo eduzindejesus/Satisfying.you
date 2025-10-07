@@ -160,7 +160,7 @@ export default function EditResearchScreen() {
         <Text style={styles.deleteButtonText}>Apagar</Text>
       </TouchableOpacity>
 
-      {/* Custom Modal for Deletion Confirmation */}
+      {/* Modal para deletar */}
       <Modal
         visible={showModal}
         transparent
@@ -177,7 +177,7 @@ export default function EditResearchScreen() {
                 style={modalStyles.simButton}
                 onPress={() => {
                   setShowModal(false);
-                  // Adicione aqui a lógica de exclusão real
+                  //Lógica para apagar
                   alert("Pesquisa apagada!");
                 }}
               >
