@@ -5,6 +5,7 @@ import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { EventsProvider } from '@/EventsContext';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -24,16 +25,18 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        <Stack.Screen name="createAccount" options={{ title: 'Criar Conta' }} />
-        <Stack.Screen name="recoverPassword" options={{ title: 'Recuperar Senha' }} />
-        <Stack.Screen name="dataCollection" options={{ title: 'Coleta de Dados' }} />
-        <Stack.Screen name="thankYou" options={{ title: 'Agradecimentos' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <EventsProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          <Stack.Screen name="createAccount" options={{ title: 'Criar Conta' }} />
+          <Stack.Screen name="recoverPassword" options={{ title: 'Recuperar Senha' }} />
+          <Stack.Screen name="dataCollection" options={{ title: 'Coleta de Dados' }} />
+          <Stack.Screen name="thankYou" options={{ title: 'Agradecimentos' }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </EventsProvider>
   );
 }

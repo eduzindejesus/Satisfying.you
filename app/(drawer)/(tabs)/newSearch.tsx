@@ -11,6 +11,7 @@ import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useEvents } from '@/EventsContext';
 
 export default function NewResearchScreen() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function NewResearchScreen() {
   const [errorName, setErrorName] = useState('');
   const [errorDate, setErrorDate] = useState('');
   const [errorImage, setErrorImage] = useState('');
+  const { setEvents, events } = useEvents();
 
   const [fontsLoaded] = useFonts({
     'AveriaLibre': Fonts.averiaRegular,
@@ -54,7 +56,21 @@ export default function NewResearchScreen() {
     }
 
     if (valid) {
+      const newEvent = {
+        id: events.length + 1,
+        title: name,
+        date,
+        icon: 'book-outline',
+        color: '#2196F3',
+      };
+
+      setEvents([...events, newEvent]);
+
       alert('Pesquisa cadastrada com sucesso!');
+      setName('');
+      setDate('');
+
+      router.push('/home');
     }
   };
 

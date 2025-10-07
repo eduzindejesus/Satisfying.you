@@ -6,10 +6,12 @@ import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
 import { useRouter } from 'expo-router';
 import SearchCard from '@/components/searchCard';
+import { useEvents } from '@/EventsContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const { events } = useEvents();
 
   const [fontsLoaded] = useFonts({
     'AveriaLibre': Fonts.averiaRegular,
@@ -18,12 +20,6 @@ export default function HomeScreen() {
   if (!fontsLoaded) {
     return <View style={{ flex: 1, backgroundColor: '#3C2C8D' }} />;
   }
-
-  const events = [
-    { id: 1, title: 'SECOMP 2023', date: '10/10/2023', icon: 'laptop-outline', color: '#6D4C41' },
-    { id: 2, title: 'UBUNTU 2022', date: '05/06/2022', icon: 'people-outline', color: '#333' },
-    { id: 3, title: 'MENINAS CPU', date: '01/04/2022', icon: 'female-outline', color: '#E53935' },
-  ];
 
   return (
     <View style={styles.container}>
