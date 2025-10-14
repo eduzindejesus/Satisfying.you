@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#3C2C8D', alignItems: 'center', justifyContent: 'center', padding: 20 },
   title: { fontFamily: 'AveriaLibre', fontSize: 32, color: '#fff', marginBottom: 40 },
   label: { alignSelf: 'flex-start', color: '#fff', fontFamily: 'AveriaLibre', marginBottom: 5, fontSize: 16 },
-  input: { width: '100%', height: 45, backgroundColor: '#fff', borderRadius: 4, paddingHorizontal: 10, marginBottom: 15 },
+  input: { width: '100%', height: 45, backgroundColor: '#fff', borderRadius: 4, paddingHorizontal: 10, marginBottom: 15, fontFamily: 'AveriaLibre' },
   error: { color: '#FF4D4D', alignSelf: 'flex-start', marginBottom: 15, fontFamily: 'AveriaLibre' },
   loginButton: { width: '100%', backgroundColor: '#4CAF50', paddingVertical: 12, borderRadius: 4, marginBottom: 10, alignItems: 'center' },
   loginButtonText: { color: '#fff', fontFamily: 'AveriaLibre', fontSize: 18 },
