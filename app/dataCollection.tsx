@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { useEvents } from "@/EventsContext";
 
 export default function SurveyScreen() {
   const router = useRouter();
   const [selected, setSelected] = useState<number | null>(null);
+  const { id } = useLocalSearchParams();
+  const { events } = useEvents();
 
   const options = [
     { id: 1, label: "Péssimo", icon: "sad-outline", color: "#E74C3C" },
@@ -25,7 +28,10 @@ export default function SurveyScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>O que você achou do Carnaval 2024?</Text>
+      <Text style={styles.title}>
+        O que você achou do{" "}
+        {events.find((event) => String(event.id) === id)?.title || "evento"}?
+      </Text>
 
       <View style={styles.row}>
         {options.map((option) => (

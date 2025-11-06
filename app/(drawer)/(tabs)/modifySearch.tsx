@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import { Fonts } from "@/constants/Fonts";
+import { useEvents } from "@/EventsContext";
+import { Ionicons } from "@expo/vector-icons";
+import { useFonts } from "expo-font";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
 import {
+  Dimensions,
   Modal,
   Pressable,
-  Dimensions,
-  View,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
+  View,
 } from "react-native";
-import { useFonts } from "expo-font";
-import { Fonts } from "@/constants/Fonts";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 
 const modalStyles = StyleSheet.create({
   overlay: {
@@ -75,6 +76,17 @@ export default function EditResearchScreen() {
   const [errorName, setErrorName] = useState("");
   const [errorDate, setErrorDate] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const { id } = useLocalSearchParams();
+  const { events, setEvents } = useEvents();
+
+  useEffect(() => {
+    const fetchData = () => {
+      const event = events.find(event => String(event.id) === id);
+      setName(event?.title || '');
+      setDate(event?.date || '');
+    };
+    fetchData();
+  }, [id, events]);
 
   const [fontsLoaded] = useFonts({
     AveriaLibre: Fonts.averiaRegular,
@@ -102,19 +114,33 @@ export default function EditResearchScreen() {
     }
 
     if (valid) {
+      setEvents((prev) =>
+        prev.map((event) => 
+          String(event.id ) === id
+            ? { 
+              ...event,
+              title: name,
+              date,
+            }
+            : event,
+        )
+      );
       alert("Pesquisa atualizada com sucesso!");
     }
   };
 
   const handleDelete = () => {
-    setShowModal(true);
+    setEvents(prev => prev.filter(event => String(event.id) !== id))
+    alert("Pesquisa apagada!");
+    setShowModal(false);
+    router.push(`/home`);
   };
 
   return (
     <View style={styles.container}>
       {/* Cabeçalho */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.push("/cardsSearch")}>
+        <TouchableOpacity onPress={() => router.push(`/cardsSearch?id=${id}`)}>
           <Ionicons name="arrow-back" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Modificar pesquisa</Text>
@@ -155,7 +181,7 @@ export default function EditResearchScreen() {
         <Text style={styles.saveButtonText}>SALVAR</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => setShowModal(true)}>
         <Ionicons name="trash-outline" size={28} color="#fff" />
         <Text style={styles.deleteButtonText}>Apagar</Text>
       </TouchableOpacity>
@@ -176,9 +202,7 @@ export default function EditResearchScreen() {
               <Pressable
                 style={modalStyles.simButton}
                 onPress={() => {
-                  setShowModal(false);
-                  //Lógica para apagar
-                  alert("Pesquisa apagada!");
+                  handleDelete()
                 }}
               >
                 <Text style={modalStyles.buttonText}>SIM</Text>

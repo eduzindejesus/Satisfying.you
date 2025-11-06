@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useEvents } from '@/EventsContext';
 
 export default function ResearchOptionsScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
+  const { events } = useEvents();
 
   return (
     <View style={styles.container}>
@@ -13,17 +16,23 @@ export default function ResearchOptionsScreen() {
         <TouchableOpacity onPress={() => router.push('/home')}>
           <Ionicons name="arrow-back" size={28} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nome da pesquisa</Text>
+        <Text style={styles.headerTitle}>{events.find(e => String(e.id) === id)?.title}</Text>
       </View>
 
       {/* Opções */}
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/modifySearch')}>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={() => router.push({
+            pathname: '/modifySearch',
+            params: { id },
+          })}
+        >
           <MaterialIcons name="edit" size={40} color="#fff" />
           <Text style={styles.optionText}>Modificar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => router.push('/dataCollection')}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => router.push(`/dataCollection?id=${id}`)}>
           <Ionicons name="checkbox-outline" size={40} color="#fff" />
           <Text style={styles.optionText}>Coletar dados</Text>
         </TouchableOpacity>
