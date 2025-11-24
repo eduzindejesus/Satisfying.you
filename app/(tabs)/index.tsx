@@ -1,13 +1,15 @@
 import { Fonts } from '@/constants/Fonts';
+import { isValidEmail } from '@/utils/validate';
 import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   StyleSheet,
   Text, TextInput, TouchableOpacity,
   View
 } from 'react-native';
-import { isValidEmail } from '@/utils/validate';
+import { signIn } from "../../src/firebase/authService";
+
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -23,30 +25,39 @@ export default function LoginScreen() {
     return <View style={{ flex: 1, backgroundColor: '#3C2C8D' }} />;
   }
 
-  const handleLogin = () => {
-    if (!email.trim()) {
-      setError('Por favor, digite seu e-mail.');
-      return;
-    }
-    
-    if (!isValidEmail(email)) {
-      setError('Email inválido.');
-      return;
-    }
+const handleLogin = () => {
+  if (!email.trim()) {
+    setError('Por favor, digite seu e-mail.');
+    return;
+  }
 
-    if (!password.trim()) {
-      setError('Por favor, digite sua senha.');
-      return;
-    }
+  if (!isValidEmail(email)) {
+    setError('Email inválido.');
+    return;
+  }
 
-    // Usuário e senha padrão
-    if (email === 'teste@teste.com' && password === '123456') {
-      setError('');
+  if (!password.trim()) {
+    setError('Por favor, digite sua senha.');
+    return;
+  }
+
+  setError('');
+
+  signIn(email, password)
+    .then(() => {
       router.push('/home');
-    } else {
-      setError('E-mail ou senha inválidos.');
-    }
-  };
+    })
+    .catch((error: any) => {
+      if (error.code === 'auth/invalid-credential') {
+        setError('E-mail ou senha incorretos.');
+      } else if (error.code === 'auth/user-not-found') {
+        setError('Usuário não encontrado.');
+      } else {
+        setError('Erro ao fazer login.');
+      }
+    });
+};
+
 
   return (
     <View style={styles.container}>

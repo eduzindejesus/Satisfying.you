@@ -2,8 +2,10 @@ import { Fonts } from '@/constants/Fonts';
 import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { resetPassword } from '../../src/firebase/authService';
+
 
 export default function PasswordRecoveryScreen() {
     const router = useRouter();
@@ -18,20 +20,33 @@ export default function PasswordRecoveryScreen() {
         return <View style={{ flex: 1, backgroundColor: '#3C2C8D' }} />;
     }
 
-    const validateEmail = (email) => {
+    const validateEmail = (email: string) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     };
 
     const handleRecover = () => {
-        if (!validateEmail(email)) {
-            setError('E-mail parece ser inválido');
-            return;
-        }
-        setError('');
-        // lógica real de recuperação aqui
-        router.push('/'); // ou outra tela após envio
-    };
+  if (!validateEmail(email)) {
+    setError('E-mail parece ser inválido');
+    return;
+  }
+
+  setError('');
+
+  resetPassword(email)
+    .then(() => {
+      alert('Enviamos um link de recuperação para seu e-mail.');
+      router.push('/');
+    })
+    .catch((error: any) => {
+      if (error.code === 'auth/user-not-found') {
+        setError('E-mail não encontrado.');
+      } else {
+        setError('Erro ao enviar e-mail de recuperação.');
+      }
+    });
+};
+
 
     return (
         <View style={styles.container}>
