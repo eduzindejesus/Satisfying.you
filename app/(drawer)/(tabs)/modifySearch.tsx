@@ -1,5 +1,9 @@
 import { Fonts } from "@/constants/Fonts";
-import { useEvents } from '@/src/contexts/EventsContext';
+import { useEvents } from "@/src/contexts/EventsContext";
+import {
+  deleteEvent,
+  updateEvent,
+} from "@/src/services/firebase/firestoreService";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -77,13 +81,13 @@ export default function EditResearchScreen() {
   const [errorDate, setErrorDate] = useState("");
   const [showModal, setShowModal] = useState(false);
   const { id } = useLocalSearchParams();
-  const { events, setEvents } = useEvents();
+  const { events } = useEvents();
 
   useEffect(() => {
     const fetchData = () => {
-      const event = events.find(event => String(event.id) === id);
-      setName(event?.title || '');
-      setDate(event?.date || '');
+      const event = events.find((event) => String(event.id) === id);
+      setName(event?.title || "");
+      setDate(event?.date || "");
     };
     fetchData();
   }, [id, events]);
@@ -96,7 +100,7 @@ export default function EditResearchScreen() {
     return <View style={{ flex: 1, backgroundColor: "#3C2C8D" }} />;
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     let valid = true;
 
     if (!name) {
@@ -114,26 +118,24 @@ export default function EditResearchScreen() {
     }
 
     if (valid) {
-      setEvents((prev) =>
-        prev.map((event) => 
-          String(event.id ) === id
-            ? { 
-              ...event,
-              title: name,
-              date,
-            }
-            : event,
-        )
-      );
-      alert("Pesquisa atualizada com sucesso!");
+      try {
+        await updateEvent(id as string, { title: name, date });
+        alert("Pesquisa atualizada com sucesso!");
+      } catch (error) {
+        alert("Erro ao atualizar pesquisa");
+      }
     }
   };
 
-  const handleDelete = () => {
-    setEvents(prev => prev.filter(event => String(event.id) !== id))
-    alert("Pesquisa apagada!");
-    setShowModal(false);
-    router.push(`/home`);
+  const handleDelete = async () => {
+    try {
+      await deleteEvent(id as string);
+      alert("Pesquisa apagada!");
+      setShowModal(false);
+      router.push(`/home`);
+    } catch (error) {
+      alert("Erro ao apagar pesquisa",);
+    }
   };
 
   return (
@@ -181,7 +183,10 @@ export default function EditResearchScreen() {
         <Text style={styles.saveButtonText}>SALVAR</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.deleteButton} onPress={() => setShowModal(true)}>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => setShowModal(true)}
+      >
         <Ionicons name="trash-outline" size={28} color="#fff" />
         <Text style={styles.deleteButtonText}>Apagar</Text>
       </TouchableOpacity>
@@ -202,7 +207,7 @@ export default function EditResearchScreen() {
               <Pressable
                 style={modalStyles.simButton}
                 onPress={() => {
-                  handleDelete()
+                  handleDelete();
                 }}
               >
                 <Text style={modalStyles.buttonText}>SIM</Text>
