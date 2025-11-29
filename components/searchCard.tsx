@@ -5,17 +5,15 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface SearchCardProps {
   event: {
-    id: number;
+    id: string;
     icon: string;
     color: string;
     title: string;
     date: string;
-  }
+  };
 }
 
-export default function SearchCard({
-  event
-}: SearchCardProps) {
+export default function SearchCard({ event }: SearchCardProps) {
   const router = useRouter();
 
   return (

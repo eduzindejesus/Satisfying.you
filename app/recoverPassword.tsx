@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { resetPassword } from '@/src/services/firebase/authService';
 
 export default function PasswordRecoveryScreen() {
     const router = useRouter();
@@ -27,13 +28,24 @@ export default function PasswordRecoveryScreen() {
     };
 
     const handleRecover = () => {
-        if (!validateEmail(email)) {
-            setError('E-mail parece ser inválido');
-            return;
-        }
-        setError('');
-        // lógica real de recuperação aqui
-        router.push('/'); // ou outra tela após envio
+      if (!validateEmail(email)) {
+        setError("E-mail parece ser inválido");
+        return;
+      }
+      setError("");
+
+      resetPassword(email)
+        .then(() => {
+          alert("Enviamos um link de recuperação para seu e-mail.");
+          router.push("/");
+        })
+        .catch((error: any) => {
+          if (error.code === "auth/user-not-found") {
+            setError("E-mail não encontrado.");
+          } else {
+            setError("Erro ao enviar e-mail de recuperação.");
+          }
+        });
     };
 
     return (

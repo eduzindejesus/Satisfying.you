@@ -5,7 +5,7 @@ import { ThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native
 import * as Font from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { EventsProvider } from '@/EventsContext';
+import { EventsProvider } from '@/src/contexts/EventsContext';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useEvents } from '@/EventsContext';
+import { useEvents } from '@/src/contexts/EventsContext';
 
 export default function ResearchOptionsScreen() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function ResearchOptionsScreen() {
         <TouchableOpacity onPress={() => router.push('/home')}>
           <Ionicons name="arrow-back" size={28} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{events.find(e => String(e.id) === id)?.title}</Text>
+        <Text style={styles.headerTitle}>{events.find((e: any) => String(e.id) === id)?.title}</Text>
       </View>
 
       {/* Opções */}
