@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import { isValidEmail } from '@/utils/validate';
+import { signIn } from '@/src/services/firebase/authService';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -25,27 +26,35 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     if (!email.trim()) {
-      setError('Por favor, digite seu e-mail.');
+      setError("Por favor, digite seu e-mail.");
       return;
     }
-    
+
     if (!isValidEmail(email)) {
-      setError('Email inválido.');
+      setError("Email inválido.");
       return;
     }
 
     if (!password.trim()) {
-      setError('Por favor, digite sua senha.');
+      setError("Por favor, digite sua senha.");
       return;
     }
 
-    // Usuário e senha padrão
-    if (email === 'teste@teste.com' && password === '123456') {
-      setError('');
-      router.push('/home');
-    } else {
-      setError('E-mail ou senha inválidos.');
-    }
+    setError("");
+
+    signIn(email, password)
+      .then(() => {
+        router.push("/home");
+      })
+      .catch((error: any) => {
+        if (error.code === "auth/invalid-email") {
+          setError("E-mail inválido.");
+        } else if (error.code === "auth/user-not-found") {
+          setError("E-mail não encontrado.");
+        } else {
+          setError("Erro ao fazer login.");
+        }
+      });
   };
 
   return (

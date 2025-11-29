@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { signUp } from '@/src/services/firebase/authService';
 
 export default function SignUpScreen() {
   const router = useRouter();
@@ -52,7 +53,22 @@ export default function SignUpScreen() {
     }
 
     setError('');
-    router.push('/');
+
+    signUp(email, password)
+      .then(() => {
+        router.push("/home");
+      })
+      .catch((error: any) => {
+        if (error.code === "auth/email-already-in-use") {
+          setError("Este e-mail já está em uso.");
+        } else if (error.code === "auth/invalid-email") {
+          setError("E-mail inválido.");
+        } else if (error.code === "auth/weak-password") {
+          setError("A senha deve ter pelo menos 6 caracteres.");
+        } else {
+          setError("Erro ao criar conta.");
+        }
+      });
   };
 
   return (
