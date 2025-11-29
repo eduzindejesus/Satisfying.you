@@ -6,7 +6,7 @@ import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
 import { useRouter } from 'expo-router';
 import SearchCard from '@/components/searchCard';
-import { useEvents } from '@/EventsContext';
+import { EventType, useEvents } from '@/src/contexts/EventsContext';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function HomeScreen() {
 
       {/* Cards de eventos */}
       <ScrollView horizontal contentContainerStyle={styles.cardsContainer} showsHorizontalScrollIndicator={false}>
-        {events.map((event) => (
+        {events.map((event: EventType) => (
           <SearchCard 
             key={event.id}
             event={event}

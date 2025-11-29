@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useEvents } from "@/EventsContext";
+import { useEvents } from "@/src/contexts/EventsContext";
 
 export default function SurveyScreen() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function SurveyScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>
         O que você achou do{" "}
-        {events.find((event) => String(event.id) === id)?.title || "evento"}?
+        {events.find((event: any) => String(event.id) === id)?.title || "evento"}?
       </Text>
 
       <View style={styles.row}>

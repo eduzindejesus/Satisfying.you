@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 
-type EventType = {
+export type EventType = {
   id: number;
   title: string;
   date: string;

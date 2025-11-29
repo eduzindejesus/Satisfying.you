@@ -1,5 +1,5 @@
 import { Fonts } from "@/constants/Fonts";
-import { useEvents } from "@/EventsContext";
+import { useEvents } from '@/src/contexts/EventsContext';
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { useLocalSearchParams, useRouter } from "expo-router";

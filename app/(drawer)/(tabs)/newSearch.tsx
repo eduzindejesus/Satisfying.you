@@ -11,7 +11,7 @@ import { useFonts } from 'expo-font';
 import { Fonts } from '@/constants/Fonts';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useEvents } from '@/EventsContext';
+import { useEvents } from '@/src/contexts/EventsContext';
 
 export default function NewResearchScreen() {
   const router = useRouter();
