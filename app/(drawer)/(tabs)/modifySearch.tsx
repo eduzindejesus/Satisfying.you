@@ -6,6 +6,7 @@ import {
 } from "@/src/services/firebase/firestoreService";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,77 +20,28 @@ import {
   View,
 } from "react-native";
 
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalBox: {
-    width: Math.min(Dimensions.get("window").width * 0.8, 600),
-    backgroundColor: "#3C2C8D",
-    borderRadius: 16,
-    padding: 24,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  simButton: {
-    flex: 1,
-    backgroundColor: "#E94F7A",
-    paddingVertical: 12,
-    marginRight: 8,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: "#4F7AE9",
-    paddingVertical: 12,
-    marginLeft: 8,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
-
 export default function EditResearchScreen() {
   const router = useRouter();
-  const [name, setName] = useState("Carnaval 2024");
-  const [date, setDate] = useState("16/02/2024");
-  const [errorName, setErrorName] = useState("");
-  const [errorDate, setErrorDate] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const { id } = useLocalSearchParams();
   const { events } = useEvents();
 
+  const [name, setName] = useState("");
+  const [date, setDate] = useState("");
+  const [errorName, setErrorName] = useState("");
+  const [errorDate, setErrorDate] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+  // NOVO: modal de imagem
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+
+  // NOVO: imagem local
+  const [imageURI, setImageURI] = useState<string | null>(null);
+
+  // carregando dados da pesquisa
   useEffect(() => {
-    const fetchData = () => {
-      const event = events.find((event) => String(event.id) === id);
-      setName(event?.title || "");
-      setDate(event?.date || "");
-    };
-    fetchData();
+    const event = events.find((event) => String(event.id) === id);
+    setName(event?.title || "");
+    setDate(event?.date || "");
   }, [id, events]);
 
   const [fontsLoaded] = useFonts({
@@ -100,30 +52,67 @@ export default function EditResearchScreen() {
     return <View style={{ flex: 1, backgroundColor: "#3C2C8D" }} />;
   }
 
+  // 📌 Função para selecionar imagem
+  const pickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      alert("Permissão necessária para acessar as imagens.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageURI(result.assets[0].uri);
+    }
+  };
+
+  // 📌 Função para tirar foto
+  const openCamera = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permission.granted) {
+      alert("Permissão necessária para usar a câmera.");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageURI(result.assets[0].uri);
+    }
+  };
+
   const handleSave = async () => {
     let valid = true;
 
     if (!name) {
       setErrorName("Preencha o nome da pesquisa");
       valid = false;
-    } else {
-      setErrorName("");
-    }
+    } else setErrorName("");
 
     if (!date) {
       setErrorDate("Preencha a data");
       valid = false;
-    } else {
-      setErrorDate("");
-    }
+    } else setErrorDate("");
 
-    if (valid) {
-      try {
-        await updateEvent(id as string, { title: name, date });
-        alert("Pesquisa atualizada com sucesso!");
-      } catch (error) {
-        alert("Erro ao atualizar pesquisa");
-      }
+    if (!valid) return;
+
+    try {
+      await updateEvent(id as string, {
+        title: name,
+        date,
+      });
+
+      alert("Pesquisa atualizada com sucesso!");
+    } catch (error) {
+      alert("Erro ao atualizar pesquisa");
     }
   };
 
@@ -134,7 +123,7 @@ export default function EditResearchScreen() {
       setShowModal(false);
       router.push(`/home`);
     } catch (error) {
-      alert("Erro ao apagar pesquisa",);
+      alert("Erro ao apagar pesquisa");
     }
   };
 
@@ -174,8 +163,19 @@ export default function EditResearchScreen() {
 
       {/* Imagem */}
       <Text style={styles.label}>Imagem</Text>
-      <TouchableOpacity style={styles.imageBox}>
-        <Ionicons name="image-outline" size={32} color="#9c27b0" />
+
+      <TouchableOpacity
+        style={styles.imageBox}
+        onPress={() => setImageModalVisible(true)}
+      >
+        <Text
+          style={{
+            fontFamily: "AveriaLibre",
+            color: imageURI ? "green" : "#aaa",
+          }}
+        >
+          {imageURI ? "Imagem selecionada ✓" : "Câmera/Galeria de imagens"}
+        </Text>
       </TouchableOpacity>
 
       {/* Botões */}
@@ -191,40 +191,151 @@ export default function EditResearchScreen() {
         <Text style={styles.deleteButtonText}>Apagar</Text>
       </TouchableOpacity>
 
-      {/* Modal para deletar */}
-      <Modal
-        visible={showModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={modalStyles.overlay}>
-          <View style={modalStyles.modalBox}>
-            <Text style={modalStyles.modalText}>
+      {/* Modal deletar */}
+      <Modal visible={showModal} transparent animationType="fade">
+        <View style={deleteModalStyles.overlay}>
+          <View style={deleteModalStyles.modalBox}>
+            <Text style={deleteModalStyles.modalText}>
               Tem certeza de apagar essa pesquisa?
             </Text>
-            <View style={modalStyles.buttonRow}>
-              <Pressable
-                style={modalStyles.simButton}
-                onPress={() => {
-                  handleDelete();
-                }}
-              >
-                <Text style={modalStyles.buttonText}>SIM</Text>
+
+            <View style={deleteModalStyles.buttonRow}>
+              <Pressable style={deleteModalStyles.simButton} onPress={handleDelete}>
+                <Text style={deleteModalStyles.buttonText}>SIM</Text>
               </Pressable>
+
               <Pressable
-                style={modalStyles.cancelButton}
+                style={deleteModalStyles.cancelButton}
                 onPress={() => setShowModal(false)}
               >
-                <Text style={modalStyles.buttonText}>CANCELAR</Text>
+                <Text style={deleteModalStyles.buttonText}>CANCELAR</Text>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
+
+      {/* MODAL IGUAL AO NEWRESEARCHSCREEN */}
+      {imageModalVisible && (
+        <View style={imagePickerModalStyles.overlay}>
+          <View style={imagePickerModalStyles.modalBox}>
+            <TouchableOpacity
+              style={imagePickerModalStyles.optionButton}
+              onPress={() => {
+                setImageModalVisible(false);
+                openCamera();
+              }}
+            >
+              <Text style={imagePickerModalStyles.optionText}>Abrir câmera</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={imagePickerModalStyles.optionButton}
+              onPress={() => {
+                setImageModalVisible(false);
+                pickImage();
+              }}
+            >
+              <Text style={imagePickerModalStyles.optionText}>Escolher da galeria</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                imagePickerModalStyles.optionButton,
+                { backgroundColor: "#ccc" },
+              ]}
+              onPress={() => setImageModalVisible(false)}
+            >
+              <Text style={imagePickerModalStyles.optionText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
+
+
+const imagePickerModalStyles = StyleSheet.create({
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    width: 250,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 10,
+  },
+  optionButton: {
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+  },
+  optionText: {
+    textAlign: "center",
+    fontFamily: "AveriaLibre",
+    fontSize: 16,
+    color: "#333",
+  },
+});
+
+
+const deleteModalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    width: Math.min(Dimensions.get("window").width * 0.8, 600),
+    backgroundColor: "#3C2C8D",
+    borderRadius: 16,
+    padding: 24,
+    alignItems: "center",
+  },
+  modalText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 24,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  simButton: {
+    flex: 1,
+    backgroundColor: "#E94F7A",
+    paddingVertical: 12,
+    marginRight: 8,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#4F7AE9",
+    paddingVertical: 12,
+    marginLeft: 8,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+});
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#3C2C8D", padding: 20 },
