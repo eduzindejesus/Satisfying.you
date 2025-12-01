@@ -16,6 +16,8 @@ export async function addEvent(event: EventType) {
       date: event.date,
       icon: event.icon,
       color: event.color,
+      // include image if provided
+      ...(event.image ? { image: event.image } : {}),
       createdAt: new Date(),
     });
     console.log("Documento adicionado com sucesso:", docRef.id);

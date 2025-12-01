@@ -1,22 +1,24 @@
+import { Fonts } from "@/constants/Fonts";
+import { addEvent } from "@/src/services/firebase/firestoreService";
+import { Ionicons } from "@expo/vector-icons";
+import { useFonts } from "expo-font";
+import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  View,
-  Text, 
+  Image,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
+  View,
 } from "react-native";
-import { useFonts } from "expo-font";
-import { Fonts } from "@/constants/Fonts";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { addEvent } from "@/src/services/firebase/firestoreService";
 
 export default function NewResearchScreen() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [date, setDate] = useState("");
-  const [imageSelected, setImageSelected] = useState(false);
+  const [imageSelected, setImageSelected] = useState<string | null>(null);
   const [errorName, setErrorName] = useState("");
   const [errorDate, setErrorDate] = useState("");
   const [errorImage, setErrorImage] = useState("");
@@ -82,6 +84,31 @@ export default function NewResearchScreen() {
     }
   };
 
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permissão para acessar a galeria é necessária.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        allowsEditing: true,
+      });
+
+      // new API returns `assets` array; older returns `uri` directly
+      const uri = (result as any).assets?.[0]?.uri ?? (result as any).uri ?? null;
+      if (uri) {
+        setImageSelected(uri);
+      }
+    } catch (error) {
+      console.log('pickImage error', error);
+      alert('Erro ao selecionar imagem');
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Cabeçalho */}
@@ -124,16 +151,13 @@ export default function NewResearchScreen() {
       <Text style={styles.label}>Imagem</Text>
       <TouchableOpacity
         style={styles.imageBox}
-        onPress={() => {
-          setImageSelected(true);
-          setErrorImage("");
-          // Aqui você pode adicionar lógica para abrir câmera/galeria
-          alert("Imagem selecionada! (Simulação)");
-        }}
+        onPress={pickImage}
       >
-        <Text style={styles.imageText}>
-          {imageSelected ? "Imagem selecionada ✓" : "Câmera/Galeria de imagens"}
-        </Text>
+        {imageSelected ? (
+          <Image source={{ uri: imageSelected }} style={styles.imagePreview} />
+        ) : (
+          <Text style={styles.imageText}>Câmera/Galeria de imagens</Text>
+        )}
       </TouchableOpacity>
       {errorImage ? <Text style={styles.error}>{errorImage}</Text> : null}
 
@@ -181,6 +205,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 4,
   },
   imageText: { color: "#aaa", fontFamily: "AveriaLibre" },
   registerButton: {

@@ -13,6 +13,7 @@ export type EventType = {
   date: string;
   icon: string;
   color: string;
+  image?: string | null;
 };
 
 type EventsContextType = {

@@ -6,10 +6,12 @@ import {
 } from "@/src/services/firebase/firestoreService";
 import { Ionicons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
+import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Dimensions,
+  Image,
   Modal,
   Pressable,
   StyleSheet,
@@ -77,6 +79,7 @@ export default function EditResearchScreen() {
   const router = useRouter();
   const [name, setName] = useState("Carnaval 2024");
   const [date, setDate] = useState("16/02/2024");
+  const [imageSelected, setImageSelected] = useState<string | null>(null);
   const [errorName, setErrorName] = useState("");
   const [errorDate, setErrorDate] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -88,6 +91,7 @@ export default function EditResearchScreen() {
       const event = events.find((event) => String(event.id) === id);
       setName(event?.title || "");
       setDate(event?.date || "");
+      setImageSelected(event?.image ?? null);
     };
     fetchData();
   }, [id, events]);
@@ -119,11 +123,35 @@ export default function EditResearchScreen() {
 
     if (valid) {
       try {
-        await updateEvent(id as string, { title: name, date });
+        const updatePayload: any = { title: name, date };
+        if (imageSelected) updatePayload.image = imageSelected;
+        await updateEvent(id as string, updatePayload);
         alert("Pesquisa atualizada com sucesso!");
       } catch (error) {
         alert("Erro ao atualizar pesquisa");
       }
+    }
+  };
+
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Permissão para acessar a galeria é necessária.');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        allowsEditing: true,
+      });
+
+      const uri = (result as any).assets?.[0]?.uri ?? (result as any).uri ?? null;
+      if (uri) setImageSelected(uri);
+    } catch (error) {
+      console.log('pickImage error', error);
+      alert('Erro ao selecionar imagem');
     }
   };
 
@@ -172,10 +200,14 @@ export default function EditResearchScreen() {
       </View>
       {errorDate ? <Text style={styles.error}>{errorDate}</Text> : null}
 
-      {/* Imagem */}
+          {/* Imagem */}
       <Text style={styles.label}>Imagem</Text>
-      <TouchableOpacity style={styles.imageBox}>
-        <Ionicons name="image-outline" size={32} color="#9c27b0" />
+      <TouchableOpacity style={styles.imageBox} onPress={pickImage}>
+        {imageSelected ? (
+          <Image source={{ uri: imageSelected }} style={styles.imagePreview} />
+        ) : (
+          <Ionicons name="image-outline" size={32} color="#9c27b0" />
+        )}
       </TouchableOpacity>
 
       {/* Botões */}
@@ -262,6 +294,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 4,
   },
   saveButton: {
     backgroundColor: "#4CAF50",
