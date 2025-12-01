@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#3C2C8D', paddingTop: 40 },
   topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, marginBottom: 20 },
   searchInput: {
+    color: '#3F92C5',
     flex: 1,
     height: 40,
     backgroundColor: '#fff',
