@@ -240,6 +240,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   input: {
+    color: "#3F92C5",
+    fontFamily: "AveriaLibre",
     backgroundColor: "#fff",
     borderRadius: 4,
     paddingHorizontal: 10,
