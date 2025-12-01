@@ -95,6 +95,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     input: {
+        color: '#3F92C5',
+        fontFamily: 'AveriaLibre',
         width: '100%',
         height: 45,
         backgroundColor: '#fff',
